@@ -1,5 +1,3 @@
-:- use_module(library(clpfd)).
-
 %  member(elem, L) ==> true se L contiene elem
 member(X, [X | _]).
 member(X, [_ | T]) :- member(X, T).
@@ -43,35 +41,31 @@ uniqueMatrixFirstLast([H | T]) :-
 isMatrixSquare([H | T]) :- len(H, COLS), len([H | T], ROWS), 
 													 ROWS >= 2, COLS >= 2, ROWS == COLS.
 
-transposeMatrix([[]|_], []).
-transposeMatrix(Matrix, [Row|Rows]) :- transpose_1st_col(Matrix, Row, RestMatrix),
+transposeMatrix([[] | _], []).
+transposeMatrix(Matrix, [Row | Rows]) :- transpose_1st_col(Matrix, Row, RestMatrix),
                                  transposeMatrix(RestMatrix, Rows).
 transpose_1st_col([], [], []).
-transpose_1st_col([[H|T]|Rows], [H|Hs], [T|Ts]) :- transpose_1st_col(Rows, Hs, Ts).
+transpose_1st_col([[H | T] | Rows], [H | Hs], [T | Ts]) :- transpose_1st_col(Rows, Hs, Ts).
 
+% countChangesMax(L, RIS) ==> RIS è pari al numero di volte in cui il massimo cambia nella lista L (da sinistra a destra) 
+countChangesMax([0 | T], RIS) :- countChangesMaxAux(T, 0, 1, RIS).
+countChangesMax(L, RIS) :- countChangesMaxAux(L, 0, 0, RIS).
 
-
-
-% counts the number of visible skyscrapers on a given sequence
-countChangesMax(_, 0).
-countChangesMax([0|Rest], Constraint) :- countChangesMax(Rest, 0, Constraint, 0).
-countChangesMax([First|Rest], Constraint) :- First  #> 0, countChangesMax(Rest, First, Constraint, 1).
-
-% checks whether the number of visible skyscrapers in given sequence satisfies
-% a constraint, starting with some max height and a previous count
-countChangesMax([], _, Constraint, Constraint).
-countChangesMax([First|Rest], Max, Constraint, Seen) :-
-    (First #> Max, Num #= Seen + 1, countChangesMax(Rest,First,Constraint,Num));
-    (First #=< Max, countChangesMax(Rest,Max,Constraint,Seen)).
-
-% % countChangesMax(L, RIS) ==> RIS è pari al numero di volte in cui il massimo cambia nella lista L (da sinistra a destra)
-% countChangesMax([], 0).
-% countChangesMax([_], 1).
-% countChangesMax([H | T], RIS) :- 
+countChangesMaxAux([H | T], CurrentMax, Acc, RIS) :-
+    H > CurrentMax,
+		AccNew is Acc + 1,
+    countChangesMaxAux(T, H, AccNew, RIS).
+ 
+countChangesMaxAux([H | T], CurrentMax, Acc, RIS) :-
+    H =< CurrentMax,
+    countChangesMaxAux(T, CurrentMax, Acc, RIS).
+ 
+countChangesMaxAux([], _, Acc, Acc).
 
 % isListCompliant(L) ==> true se la lista L rispetta il vincolo del gioco skyscrapers previsto per ogni riga/colonna:
 % 											 il primo elemento della lista deve essere uguale al numero di massimi incontrati
-%											   lungo il resto della lista
+% 											   lungo il resto della lista
+isListCompliant([0 | _]). 
 isListCompliant([H | T]) :-  countChangesMax(T, MAXS), H == MAXS. 
 
 checkRuleForward([]).
@@ -84,23 +78,25 @@ checkRuleBackward([H | T]) :-
 
 % isMatrixCompliant(L) ==> true se la matrice M rispetta le regole del gioco skyscrapers
 isMatrixCompliant(M) :-
-		M = 
-		[[0, 3, 2, 1, 3, 2, 0],[3, 3, 4, 5, 1, 2, 2],[4, 1, 2, 4, 3, 5, 1],[3, 2, 1, 3, 5, 4, 2],[2, 4, 5, 1, 2, 3, 2],[1, 5, 3, 2, 4, 1, 3],[0, 1, 2, 4, 2, 4, 0]],
 
-		isMatrixSquare(M), 																				% la matrice deve essere quadrata
+		isMatrixSquare(M), 																				% controllo che la matrice sia quadrata
 
 		removeFirstLast(M, M1), uniqueMatrixFirstLast(M1),        % controllo che all'interno dei bordi vi siano valori unici:
 																															% elimino prima e ultima riga, e controllo se le restanti righe
 																															% contengono valori unici a meno di prima e ultima colonna
 		
-		checkRuleForward(M),
-		checkRuleBackward(M),
+		checkRuleForward(M),																			% controllo la regola da sx a dx
+		checkRuleBackward(M),																			% controllo la regola da dx a sx
 
 		transposeMatrix(M, MT),
 		
-		checkRuleForward(MT),
-		checkRuleBackward(MT).
+		checkRuleForward(MT),																			% traspongo e controllo la regola da sx a dx
+		checkRuleBackward(MT).																		% traspongo e controllo la regola da dx a sx
 
+% Esempio con 3x3:
+% isMatrixCompliant([[0,0,0,0,0],[0,1,2,3,1],[0,3,1,2,0],[2,2,3,1,0],[0,0,0,3,0]]).
+% ==> true
+
+% Esempio con 5x5:
 % isMatrixCompliant([[0, 3, 2, 1, 3, 2, 0],[3, 3, 4, 5, 1, 2, 2],[4, 1, 2, 4, 3, 5, 1],[3, 2, 1, 3, 5, 4, 2],[2, 4, 5, 1, 2, 3, 2],[1, 5, 3, 2, 4, 1, 3],[0,1, 2, 4, 2, 4, 0]]).
-
 % ==> true
