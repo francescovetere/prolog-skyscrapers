@@ -11,6 +11,9 @@
 \usepackage[affil-it]{authblk}
 \usepackage{listings}
 
+\bibliographystyle{plain}
+\usepackage{natbib}
+
 \lstset{
   frame=bt,
   %frameround=tttt,
@@ -62,16 +65,17 @@
 
 \pagebreak
 
-% \tableofcontents
+\tableofcontents
+
+\pagebreak
 
 \section{Logic Programming}
-Logic programming is a declarative programming paradigm: being declarative means that, generally speaking, the programmer provides the properties that the desired solution should have, rather than specifying the actual sequence of operations needed in order to obtain that solution (i.e.: imperative paradigm).\\
+\textbf{Logic programming} is a \textbf{declarative} programming paradigm: being declarative means that, generally speaking, the programmer provides the properties that the desired solution should have, rather than specifying the actual sequence of operations needed in order to obtain that solution (which is typical of the imperative paradigm).\\
 
-In particular, logic programming is based on formal logic: basically, any program is composed by
-a list of facts and rules.\\
+In particular, logic programming is based on \textbf{formal logic}: basically, every logical program is composed by a list of \textbf{facts} and \textbf{rules}.\\
 Given a certain goal, the idea is to demonstrate the truth of the goal using the knowledge base formed by facts and rules.\\
 
-A key concept in logic programming is the one of unification.\\
+A key concept in logic programming is the one of \textbf{unification}.\\
 
 In logic, unification is the algorithmic procedure used in solving equations involving symbolic expressions.\\
 In other words, by replacing certain sub-expression variables with other expressions, unification tries to identify two symbolic expressions.\\
@@ -83,17 +87,18 @@ In Prolog for example, when we try to unify two terms, the interpreter performs 
 \pagebreak
 
 \section{Prolog}
-Prolog is a logic programming language associated with artificial intelligence and computational linguistics, that has its roots in first-order logic, a formal logic, and uses a declarative style.\\
+\subsection{Introduction to Prolog}
+\textbf{Prolog} is a logic programming language associated with artificial intelligence and computational linguistics, that has its roots in \textbf{first-order logic}, a formal logic, and uses a declarative style.\\
 
 The language was implemented in the 70s by Alain Colmerauer, and since then it's been widely used for theorem proving, expert systems, automated planning and so on.\\
 
 A Prolog program is generally composed by:\\
 \begin{itemize}
-  \item Facts (absolute truths about the domain)
+  \item \textbf{Facts} (absolute truths about the domain)
   \begin{verbatim}
   father(a, b).
   \end{verbatim}
-  \item Rules
+  \item \textbf{Rules}
   \begin{verbatim}
   grandfather(X, Y) :- father(X, Z), father(Z, Y).
   \end{verbatim}
@@ -101,14 +106,15 @@ A Prolog program is generally composed by:\\
 
 Once the program has been written, we can ask the Prolog interpreter to solve a particular query.\\
 
-In order to satisfy the goal, the backward chaining mechanism it's used:\\
-
+In order to satisfy the goal, a \textbf{backward chaining} mechanism it's used:\\
 If a fact that matches the query is known, the goal is satisfied;\\
 Otherwise, for each rule whose consequences meet the question, the interpeter tries to test if each rule premise satisfies the query.\\
 
 \pagebreak
 
-Let's see a basic example of Prolog program.\\
+\subsection{Basic Prolog example}
+
+Let's see a basic example of a Prolog program.\\
 
 \begin{lstlisting}
   %%%%%%%%%%%%%
@@ -132,11 +138,14 @@ Let's see a basic example of Prolog program.\\
   brother(X, Y) :- father(Z, X), father(Z, Y), X \= Y. 
 
   % Rule 2
-  % grandfather(X, Y) ==> true if X is father of a generic Z, and that Z is father of Y
+  % grandfather(X, Y) ==> true if X is father of a generic Z, 
+  %                          and that Z is father of Y
 
   grandfather(X, Y) :- father(X, Z), father(Z, Y).
 
 \end{lstlisting}
+
+\vspace{3mm}
 
 Once the program has been loaded, we can ask for some queries to be solved.\\
 
@@ -152,17 +161,17 @@ Once the program has been loaded, we can ask for some queries to be solved.\\
 \pagebreak
 
 \section{Skyscrapers puzzle}
-The goal of this project is to implement the classic Skyscrapers puzzle using Prolog.\\
+\subsection{Rules}
+The goal of this project is to implement the classic \textbf{Skyscrapers puzzle} using Prolog.\\
 
-Skyscrapers is a game in which a matrix is given, and one should tell if that matrix is compliant or not according to some rules:\\
-
+Skyscrapers is a game in which a matrix is given, and the goal is to tell if that matrix is compliant or not according to some \textbf{rules}:\\
 \begin{itemize}
   \item The numbers inside the matrix represent the heights of buildings.
-  \item The numbers along the sides tell you how many skyscrapers a person standing in that spot can see.
-  \item Each row and column contains each number only once.
+  \item The numbers along the sides represent how many skyscrapers a person standing in that spot can see.
+  \item Each row or column contains each number only once.
 \end{itemize}
 
-Here are a few examples of how the clues help us to see which skyscrapers we might be able to see:\\
+Here are showed a few examples of how the clues help us to see which skyscrapers we should be able to see:\\
 
 \begin{figure}[H]
   \centering
@@ -172,6 +181,8 @@ Here are a few examples of how the clues help us to see which skyscrapers we mig
 
 \pagebreak
 
+\subsection{Example of compliant matrix}
+
 So, for example, this matrix is compliant with the rules of the game:\\
 
 \begin{figure}[H]
@@ -180,7 +191,8 @@ So, for example, this matrix is compliant with the rules of the game:\\
   \caption{Skyscrapers compliant example}
 \end{figure}
 
-In order to represent a matrix in a \texttt{.txt} file, this particular format has been chosen:\\
+\subsection{Matrix format}
+In order to represent a matrix in a \texttt{.txt} file, a particular format has been chosen:\\
 
 \begin{verbatim}
   <N>
@@ -188,6 +200,8 @@ In order to represent a matrix in a \texttt{.txt} file, this particular format h
   ...
   <M[N-1,0]> ... <M[N-1,N-1]>
 \end{verbatim}
+
+\vspace{3mm}
 
 So, for example, the following file \texttt{3x3.txt} represents a compliant matrix:\\
 
@@ -205,8 +219,9 @@ So, for example, the following file \texttt{3x3.txt} represents a compliant matr
 \pagebreak
 
 \section{Implementation}
+\subsection{Program}
 In order to implement the puzzle in Prolog, a program \texttt{skyscrapers.pl} has been written.\\
-It contains some basic predicates on lists and matrices, as well as some other predicates specific of the problem.\\
+It contains some basic predicates on lists and matrices, as well as some other predicates specific for the problem.\\
 
 \begin{lstlisting}
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,8 +267,6 @@ It contains some basic predicates on lists and matrices, as well as some other p
   % uniqueFirstLast(L) ==> true se L, privata del primo e ultimo elemento (quelli di bordo!) contiene valori unici
   uniqueFirstLast(L) :- removeFirstLast(L, LNew), unique(LNew).
   
-  
-
 
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -351,29 +364,29 @@ It contains some basic predicates on lists and matrices, as well as some other p
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   
-  % leggi_lista_str(L, F) ==> L è la lista letta dal file F
-  leggi_lista_str(L, F):- see(F), leggi_lista_str(L), seen.
-  leggi_lista_str([S|R]):- leggi_atomo(S), S\==end_of_file, !, leggi_lista_str(R).
-  leggi_lista_str([]).
-  leggi_atomo(end_of_file):- at_end_of_stream, !.
-  leggi_atomo(S):- leggi_lista_car(L), name(S, L).
-  leggi_lista_car([C|R]):- get0(C), C\==10, C\==32, C\==(-1), !, leggi_lista_car(R).
-  leggi_lista_car([]).
-  
+  % read_list_str(L, F) ==> L è la lista letta dal file F
+  read_list_str(L, F):- see(F), read_list_str(L), seen.
+  read_list_str([S | R]):- read_atom(S), S\==end_of_file, !, read_list_str(R).
+  read_list_str([]).
+  read_atom(end_of_file):- at_end_of_stream, !.
+  read_atom(S):- read_list_char(L), name(S, L).
+  read_list_char([C | R]):- get0(C), C\==10, C\==32, C\==(-1), !, read_list_char(R).
+  read_list_char([]).
+
   % list_to_matrix(List, N, Matrix) ==> Matrix è la matrice N x N costruita a partire da List
   list_to_matrix([], _, []).
-  list_to_matrix(List, Size, [Row|Matrix]):-
+  list_to_matrix(List, Size, [Row | Matrix]):-
       list_to_matrix_row(List, Size, Row, Tail),
       list_to_matrix(Tail, Size, Matrix).
-  
+
   list_to_matrix_row(Tail, 0, [], Tail).
-  list_to_matrix_row([Item|List], Size, [Item|Row], Tail):-
+  list_to_matrix_row([Item | List], Size, [Item | Row], Tail):-
       NSize is Size-1,
       list_to_matrix_row(List, NSize, Row, Tail).
-  
+
   % build_matrix(File, Matrix) ==> Matrix è la matrice letta dal file File
-  build_matrix(File, Matrix) :- leggi_lista_str([H | T], File), list_to_matrix(T, H, Matrix).
-  
+  build_matrix(File, Matrix) :- read_list_str([H | T], File), list_to_matrix(T, H, Matrix).
+
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -388,24 +401,33 @@ It contains some basic predicates on lists and matrices, as well as some other p
 
 \pagebreak
 
-Now, we can test our program giving in input some compliant matrices, and verifying that the main goal is satisfied.\\
+\subsection{Tests}
+
+Now we can test our program, giving it some compliant matrices in input, and verifying that the main goal is satisfied.\\
 
 \begin{verbatim}
 > swipl
 
-> ?- consult('skyscrapers.pl').
+?- consult('skyscrapers.pl').
 
-> ?- skyscrapers('matrices/3x3.txt').
+?- skyscrapers('matrices/3x3.txt').
   		==> true.
 
-> ?- skyscrapers('matrices/4x4.txt').
+?- skyscrapers('matrices/4x4.txt').
   		==> true.
 
-> ?- skyscrapers('matrices/5x5.txt').
+?- skyscrapers('matrices/5x5.txt').
   		==> true.
 
-> ?- skyscrapers('matrices/6x6.txt').
-   		==> true.
+?- skyscrapers('matrices/6x6.txt').
+  		==> true.
 \end{verbatim}
+
+\pagebreak
+
+\renewcommand\refname{References}
+%\addcontentsline{toc}{section}{Riferimenti bibliografici}
+\subfile{bibliography.tex}
+\addcontentsline{toc}{section}{References}
 
 \end{document}
