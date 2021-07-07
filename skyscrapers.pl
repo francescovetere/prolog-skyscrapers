@@ -11,8 +11,8 @@
 %
 % ?- consult('skyscrapers.pl').
 %
-% ?- skyscrapers('3x3.txt').
-%		==> true.
+% ?- skyscrapers('matrices/3x3.txt').
+%    ==> true.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -99,11 +99,9 @@ splitMatrix(
 
 
 % countChangesMax(L, RIS) ==> RIS è pari al numero di volte in cui il massimo cambia nella lista L (da sinistra a destra) 
-countChangesMax([0 | T], RIS) :- countChangesMaxAux(T, 0, 1, RIS).
 countChangesMax(L, RIS) :- countChangesMaxAux(L, 0, 0, RIS).
 
-% countChangesMaxAux(L, RIS) ==> RIS è pari al numero di volte in cui il massimo cambia nella lista L (da sinistra a destra)
-% 															 con massimo corrente pari a CurrentMax e accumulatore Acc
+% countChangesMaxAux(L, CurrentMax, Acc, RIS) ==> RIS è pari al numero di volte in cui il massimo cambia nella lista L (da sinistra a destra) con massimo corrente pari a CurrentMax e accumulatore Acc
 countChangesMaxAux([H | T], CurrentMax, Acc, RIS) :-
     H > CurrentMax,
 		AccNew is Acc + 1,
@@ -170,6 +168,7 @@ list_to_matrix(List, Size, [Row | Matrix]):-
 	  list_to_matrix_row(List, Size, Row, Tail),
   	list_to_matrix(Tail, Size, Matrix).
 
+% list_to_matrix_row(List, N, Row, Tail) ==> Row è la lista di N elementi estratta a partire da List, mentre Tail è la parte restante
 list_to_matrix_row(Tail, 0, [], Tail).
 list_to_matrix_row([Item | List], Size, [Item | Row], Tail):-
   	NSize is Size-1,
